@@ -62,10 +62,6 @@ app.post('/addUser', async (req, res) => {
   }
 });
 
-firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.cert(serviceAccount)
-});
-
 // Configuração da coleção "users" no Firestore
 const usersCollection = firebaseAdmin.firestore().collection('users');
 
