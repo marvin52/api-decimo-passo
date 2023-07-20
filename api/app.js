@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const firebaseAdmin = require('firebase-admin');
 const md5 = require('md5');
 const app = express();
@@ -25,6 +26,7 @@ firebaseAdmin.initializeApp({
 
 // Middleware para processar requisições JSON
 app.use(express.json());
+app.use(cors());
 
 app.get('/', (req, res) => {
   res.send('Hello, World!');
