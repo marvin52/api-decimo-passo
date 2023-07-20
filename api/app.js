@@ -4,6 +4,12 @@ const firebaseAdmin = require('firebase-admin');
 const md5 = require('md5');
 const app = express();
 
+const crypto = require('crypto');
+const bodyParser = require('body-parser');
+
+
+app.use(bodyParser.json());
+
 // Configuração do Firebase Admin SDK
 const serviceAccount = {
   "type": "service_account",
@@ -55,6 +61,48 @@ app.post('/addUser', async (req, res) => {
     res.status(500).json({ error: 'Ocorreu um erro ao inserir o usuário.' });
   }
 });
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+// Configuração da coleção "users" no Firestore
+const usersCollection = admin.firestore().collection('users');
+
+// Função para criptografar a senha em MD5
+function md5(password) {
+  return crypto.createHash('md5').update(password).digest('hex');
+}
+
+// Rota para fazer o login
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Busque o usuário no Firestore pelo email
+    const userSnapshot = await usersCollection.where('email', '==', email).get();
+
+    if (userSnapshot.empty) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+
+    // Obtém o primeiro documento retornado (deve ser único, pois estamos filtrando pelo email)
+    const userDoc = userSnapshot.docs[0];
+
+    // Verifica se a senha fornecida corresponde à senha no banco (criptografada em MD5)
+    if (md5(password) !== userDoc.data().password) {
+      return res.status(401).json({ error: 'Credenciais inválidas.' });
+    }
+
+    // Se as credenciais estiverem corretas, retorna os dados do usuário
+    return res.json(userDoc.data());
+  } catch (error) {
+    console.error('Erro ao fazer login:', error);
+    return res.status(500).json({ error: 'Ocorreu um erro ao fazer login.' });
+  }
+});
+
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
