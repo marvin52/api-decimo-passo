@@ -69,11 +69,6 @@ admin.initializeApp({
 // Configuração da coleção "users" no Firestore
 const usersCollection = admin.firestore().collection('users');
 
-// Função para criptografar a senha em MD5
-function md5(password) {
-  return crypto.createHash('md5').update(password).digest('hex');
-}
-
 // Rota para fazer o login
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
