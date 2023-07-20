@@ -4,7 +4,7 @@ const md5 = require('md5');
 const app = express();
 
 // Configuração do Firebase Admin SDK
-const serviceAccount = require('serviceAccountKey.json'); // Substitua pelo caminho para o seu arquivo serviceAccountKey.json
+const serviceAccount = require('./api/serviceAccountKey.json'); // Substitua pelo caminho para o seu arquivo serviceAccountKey.json
 firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(serviceAccount),
   databaseURL: 'https://46494290241.firebaseio.com', // Substitua pelo URL do seu projeto Firebase
