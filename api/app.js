@@ -13,6 +13,10 @@ firebaseAdmin.initializeApp({
 // Middleware para processar requisições JSON
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.send('Hello, World!');
+});
+
 // Rota para inserir o usuário no Firestore
 app.post('/addUser', async (req, res) => {
   try {
