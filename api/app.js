@@ -62,12 +62,12 @@ app.post('/addUser', async (req, res) => {
   }
 });
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+firebaseAdmin.initializeApp({
+  credential: firebaseAdmin.credential.cert(serviceAccount)
 });
 
 // Configuração da coleção "users" no Firestore
-const usersCollection = admin.firestore().collection('users');
+const usersCollection = firebaseAdmin.firestore().collection('users');
 
 // Rota para fazer o login
 app.post('/login', async (req, res) => {
