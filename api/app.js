@@ -153,7 +153,7 @@ app.post('/check-login', (req, res) => {
             }
       }
     }
-    const logged = checkLoggedUser(authToken, username)
+    const logged = await checkLoggedUser(authToken, username)
     return res.json(logged);
   }
 
