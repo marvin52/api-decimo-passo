@@ -117,7 +117,7 @@ app.post('/login', async (req, res) => {
   }
 });
 
-app.post('check-login', (req, res) => {
+app.post('/check-login', (req, res) => {
   const { username, authToken } = req.cookies;
 
   // Verifica se os cookies estão presentes e não estão vazios
