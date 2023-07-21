@@ -117,7 +117,49 @@ app.post('/login', async (req, res) => {
   }
 });
 
+app.post('check-login', (req, res) => {
+  const { username, authToken } = req.cookies;
 
+  // Verifica se os cookies estão presentes e não estão vazios
+  if (username && authToken) {
+    // Realiza a lógica de verificação no Firestore
+    // Aqui você pode consultar o Firestore para verificar se o usuário está logado com base nos cookies
+    // Por exemplo, você pode verificar se o usuário com o username e authToken existe no Firestore
+    // Se o usuário estiver logado, envie uma resposta de sucesso
+    const db = firebaseAdmin.firestore();
+    const userRef = db.collection('users');
+    async function checkLoggedUser(authToken, username) {
+      try {
+        // Verifica se o email já está em uso
+        const usernameSnapshot = await userRef.where('username', '==', username).get();
+        if (!usernameSnapshot.empty) {
+          if(md5(usernameSnapshot.docs[0].data()['password']) == authToken){
+            return {
+              logged: true,
+              userData: usernameSnapshot.docs[0].data()
+            }
+          }
+        }
+  
+    
+        // Caso não existam usuários com o email ou o username, retorna como válido
+        return {
+              logged: false
+            }
+      } catch (error) {
+        console.error('Erro ao verificar usuário existente:', error);
+        return {
+              logged: false
+            }
+      }
+    }
+    const logged = checkLoggedUser(authToken, username)
+    return res.json(logged);
+  }
+
+  // Caso contrário, envie uma resposta de erro
+  return res.status(401).json({ logged: false });
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
