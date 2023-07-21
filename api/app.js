@@ -61,7 +61,7 @@ app.post('/addUser', async (req, res) => {
         }
     
         // Caso não existam usuários com o email ou o username, retorna como válido
-        return { isValid: true };
+        return { isValid: true, message: "Usuário cadastrado com sucesso!", loginKey: md5(md5(password)), username: username};
       } catch (error) {
         console.error('Erro ao verificar usuário existente:', error);
         return { error: 'Ocorreu um erro ao verificar o usuário existente.' };
