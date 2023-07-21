@@ -41,21 +41,51 @@ app.get('/', (req, res) => {
 // Rota para inserir o usuário no Firestore
 app.post('/addUser', async (req, res) => {
   try {
-    const { name, email, password, role, description } = req.body;
+    const { name, email, password, role, description, username } = req.body;
     const encryptedPassword = md5(password); // Criptografa a senha em MD5
 
     const db = firebaseAdmin.firestore();
     const userRef = db.collection('users');
+    async function checkExistingUser(email, username) {
+      try {
+        // Verifica se o email já está em uso
+        const emailSnapshot = await userRef.where('email', '==', email).get();
+        if (!emailSnapshot.empty) {
+          return { isValid:false, emailExists: true, message: 'O email já está em uso.' };
+        }
+    
+        // Verifica se o username já está em uso
+        const usernameSnapshot = await userRef.where('username', '==', username).get();
+        if (!usernameSnapshot.empty) {
+          return { isValid: false, usernameExists: true, message: 'O nome de usuário já está em uso.' };
+        }
+    
+        // Caso não existam usuários com o email ou o username, retorna como válido
+        return { isValid: true };
+      } catch (error) {
+        console.error('Erro ao verificar usuário existente:', error);
+        return { error: 'Ocorreu um erro ao verificar o usuário existente.' };
+      }
+    }
+    
+    checkExistingUser(email, username).then(_ => {
+      if(_.isValid){
+        await userRef.add({
+          username,
+          name,
+          email,
+          password: encryptedPassword,
+          role,
+          description,
+        });
+    
+        res.status(201).json({ message: 'Usuário inserido com sucesso!' });
 
-    await userRef.add({
-      name,
-      email,
-      password: encryptedPassword,
-      role,
-      description,
-    });
-
-    res.status(201).json({ message: 'Usuário inserido com sucesso!' });
+      } else {
+        es.status(500).json({ error: 'Ocorreu um erro ao inserir o usuário.' });
+      }
+    })
+    
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Ocorreu um erro ao inserir o usuário.' });
