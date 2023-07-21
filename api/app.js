@@ -110,7 +110,7 @@ app.post('/login', async (req, res) => {
     }
 
     // Se as credenciais estiverem corretas, retorna os dados do usuário
-    return res.json(userDoc.data());
+    return res.json({user: userDoc.data(), loginKey: md5(md5(password))});
   } catch (error) {
     console.error('Erro ao fazer login:', error);
     return res.status(500).json({ error: 'Ocorreu um erro ao fazer login.' });
