@@ -82,9 +82,9 @@ app.post('/addUser', async (req, res) => {
         res.status(201).json({ message: 'Usuário inserido com sucesso!' });
 
       } else {
-        es.status(500).json({ error: 'Ocorreu um erro ao inserir o usuário.' });
+        res.status(500).json({ error: 'Ocorreu um erro ao inserir o usuário.' });
       }
-    }.bind(this))
+    })
     
   } catch (error) {
     console.error(error);
