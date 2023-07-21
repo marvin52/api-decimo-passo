@@ -70,17 +70,16 @@ app.post('/addUser', async (req, res) => {
     
     checkExistingUser(email, username).then(_ => {
       if(_.isValid === true){
-        res.status(200).json(_);
-        // await userRef.add({
-        //   username,
-        //   name,
-        //   email,
-        //   password: encryptedPassword,
-        //   role,
-        //   description,
-        // });
+        await userRef.add({
+          username,
+          name,
+          email,
+          password: encryptedPassword,
+          role,
+          description,
+        });
     
-        // res.status(201).json({ message: 'Usuário inserido com sucesso!' });
+        res.status(201).json({ message: 'Usuário inserido com sucesso!' });
 
       } else {
         es.status(500).json({ error: 'Ocorreu um erro ao inserir o usuário.' });
